@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sympla - Folk Valley</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        /* Core Branding */
+        --brand-primary-pure: #0096ff;
+        --brand-primary-medium: #3aafff;
+        --brand-primary-pale: #e6f4ff;
+        --analogue-primary-pure: #00B247;
+        --analogue-primary-medium: #33c86d;
+        --analogue-primary-pale: #e6f6ea;
+        --analogue-secondary-pure: #813af3;
+        --analogue-secondary-medium: #8c58e0;
+        --analogue-secondary-pale: #f2ebfd;
+        --contrast-primary-pure: #ff6a00;
+        --contrast-primary-medium: #ff9036;
+        --contrast-primary-pale: #fff0e5;
+        --contrast-secondary-pure: #e60037;
+        --contrast-secondary-medium: #ef3f68;
+        --contrast-secondary-pale: #fde6eb;
+        
+        /* Neutrals */
+        --neutral-dark-pure: #191f28;
+        --neutral-dark-medium: #4c576c;
+        --neutral-dark-pale: #848c9b;
+        --neutral-light-pure: #dde0e4;
+        --neutral-light-medium: #f5f7f8;
+        --neutral-light-pale: #fff;
+
+        /* Support Colors */
+        --support-info-pure: #0096ff;
+        --support-info-medium: #3aafff;
+        --support-info-pale: #e6f4ff;
+        --support-success-pure: #00a832;
+        --support-success-medium: #3bbf63;
+        --support-success-pale: #e6f6ea;
+        --support-warning-pure: #ff6a00;
+        --support-warning-medium: #ff9036;
+        --support-warning-pale: #fff0e5;
+        --support-danger-pure: #e60037;
+        --support-danger-medium: #ef3f68;
+        --support-danger-pale: #fde6eb;
+
+        /* Typography */
+        --font-family: "Open Sans", sans-serif;
+        --font-super: 3.75rem;
+        --font-big: 2.625rem;
+        --font-xxlarge: 2.25rem;
+        --font-xlarge: 1.75rem;
+        --font-large: 1.5rem;
+        --font-medium: 1.25rem;
+        --font-under-medium: 1.125rem;
+        --font-base: 1rem;
+        --font-small: .875rem;
+        --font-tiny: .75rem;
+        --font-micro: .625rem;
+
+        --weight-light: 300;
+        --weight-normal: 400;
+        --weight-semibold: 600;
+        --weight-bold: 700;
+        --weight-extrabold: 800;
+
+        /* Spacing Extended */
+        --spacing-small-1: .125rem;
+        --spacing-small-2: .25rem;
+        --spacing-small-3: .5rem;
+        --spacing-small-4: .75rem;
+        --spacing-small-5: 1rem;
+        --spacing-small-6: 1.5rem;
+        --spacing-regular-1: 2rem;
+        --spacing-regular-2: 2.5rem;
+        --spacing-regular-3: 3rem;
+        --spacing-regular-4: 3.5rem;
+        --spacing-regular-5: 4rem;
+        --spacing-big-1: 4.5rem;
+        --spacing-big-2: 5rem;
+        --spacing-big-3: 5.5rem;
+        --spacing-big-4: 6rem;
+        --spacing-large-1: 6.5rem;
+        --spacing-large-2: 7rem;
+        --spacing-large-3: 7.5rem;
+        --spacing-large-4: 8rem;
+        --spacing-xlarge-1: 8.5rem;
+        --spacing-xlarge-2: 9rem;
+        --spacing-xlarge-3: 9.5rem;
+        --spacing-xlarge-4: 10rem;
+
+        /* Shadows & Radius */
+        --shadow-10: 0px 1px 2px rgba(25, 31, 40, .15);
+        --shadow-20: 0px 2px 10px rgba(25, 31, 40, .1);
+        --shadow-30: 0px 6px 24px rgba(25, 31, 40, .15);
+        --shadow-40: 0px 20px 36px rgba(25, 31, 40, .2);
+        
+        --radius-micro: .25rem;
+        --radius-small: .25rem;
+        --radius-medium: .75rem;
+        --radius-large: 1rem;
+        --radius-xlarge: 1.5rem;
+        --radius-full: 50%;
+
+        /* Icons */
+        --icon-small: 1rem;
+        --icon-base: 1.5rem;
+        --icon-medium: 2rem;
+        --icon-large: 2.5rem;
+      }
+
+      body {
+        font-family: var(--font-family);
+        background-color: var(--neutral-light-medium);
+        color: var(--neutral-dark-pure);
+        margin: 0;
+        -webkit-font-smoothing: antialiased;
+      }
+      .bg-brand { background-color: var(--brand-primary-pure); }
+      .text-brand { color: var(--brand-primary-pure); }
+      .bg-success { background-color: var(--analogue-primary-pure); }
+      .bg-dark { background-color: var(--neutral-dark-pure); }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0"
+  }
+}
+</script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

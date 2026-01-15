@@ -1,0 +1,5 @@
+{
+  "name": "Estrutura Sympla",
+  "description": "A high-fidelity clone of the Sympla event checkout page, featuring interactive ticket selection and a Gemini-powered event assistant.",
+  "requestFramePermissions": []
+}

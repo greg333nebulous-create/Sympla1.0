@@ -3,6 +3,13 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Ticket } from './types';
 import { EVENT_CONFIG } from './eventConfig';
 
+// Declaração do Meta Pixel
+declare global {
+  interface Window {
+    fbq: (action: string, event: string, data?: any) => void;
+  }
+}
+
 // Importa os ingressos do arquivo de configuração
 const TICKETS: Ticket[] = EVENT_CONFIG.ingressos;
 
@@ -233,7 +240,7 @@ const AppFooter = () => {
   );
 }
 
-const PixPaymentView = ({ pixCode, transactionId }: { pixCode: string; transactionId: string }) => {
+const PixPaymentView = ({ pixCode, transactionId, totalAmount }: { pixCode: string; transactionId: string; totalAmount: number }) => {
   const [timeLeft, setTimeLeft] = useState(897);
   const [paymentStatus, setPaymentStatus] = useState<'PENDING' | 'COMPLETED'>('PENDING');
   const [isCopied, setIsCopied] = useState(false);
@@ -246,7 +253,7 @@ const PixPaymentView = ({ pixCode, transactionId }: { pixCode: string; transacti
     const checkStatus = async () => {
       try {
         const response = await fetch(
-          `https://www.pagamentos-seguros.app/api-pix/ATRBIzKGfV6uRlgHZwoDxxieG9BPs4ZP3e5MNyHuAjtTAW1Byhy441uxp4sb0XwAENLUw6o4ksVIc5mlmX2e9A?transactionId=${transactionId}`
+          `${EVENT_CONFIG.apiPagamentoUrl}?transactionId=${transactionId}`
         );
         const data = await response.json();
         if (data.status === 'COMPLETED') {
@@ -449,6 +456,16 @@ const PixPaymentView = ({ pixCode, transactionId }: { pixCode: string; transacti
                 setShowToast(true);
                 setTimeout(() => setIsCopied(false), 3000);
                 setTimeout(() => setShowToast(false), 3000);
+                
+                // Track evento Meta Pixel - Purchase (Código PIX copiado)
+                if (typeof window.fbq !== 'undefined') {
+                    window.fbq('track', 'Purchase', {
+                        content_name: EVENT_CONFIG.nomeEvento,
+                        content_type: 'product',
+                        currency: 'BRL',
+                        value: totalAmount
+                    });
+                }
               }}
             >
               {isCopied ? (
@@ -930,12 +947,33 @@ const CheckoutView = ({
             return;
         }
         
+        // Track evento Meta Pixel - Dados preenchidos
+        if (typeof window.fbq !== 'undefined') {
+            window.fbq('track', 'InitiateCheckout', {
+                content_category: 'Evento',
+                content_name: EVENT_CONFIG.nomeEvento,
+                value: finalTotal,
+                currency: 'BRL'
+            });
+        }
+        
         setCheckoutStep(2);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleAdvanceToPayment = (insurance: boolean) => {
         setHasInsurance(insurance);
+        
+        // Track evento Meta Pixel - Avançou para pagamento
+        if (typeof window.fbq !== 'undefined') {
+            window.fbq('track', 'AddPaymentInfo', {
+                content_category: 'Evento',
+                content_name: EVENT_CONFIG.nomeEvento,
+                value: insurance ? finalTotal + INSURANCE_PRICE : finalTotal,
+                currency: 'BRL'
+            });
+        }
+        
         setCheckoutStep(3);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -1024,10 +1062,11 @@ const CheckoutView = ({
 
             // Chamar API do DuttyFy
             console.log('=== INICIANDO REQUISIÇÃO ===');
+            console.log('URL da API:', EVENT_CONFIG.apiPagamentoUrl);
             console.log('Dados enviados:', JSON.stringify(requestBody, null, 2));
             
             const response = await fetch(
-                'https://www.pagamentos-seguros.app/api-pix/ATRBIzKGfV6uRlgHZwoDxxieG9BPs4ZP3e5MNyHuAjtTAW1Byhy441uxp4sb0XwAENLUw6o4ksVIc5mlmX2e9A',
+                EVENT_CONFIG.apiPagamentoUrl,
                 {
                     method: 'POST',
                     headers: {
@@ -1040,6 +1079,23 @@ const CheckoutView = ({
             console.log('Status da resposta:', response.status);
             console.log('Headers:', [...response.headers.entries()]);
             
+            // Verificar se houve erro HTTP primeiro
+            if (!response.ok) {
+                const responseText = await response.text();
+                console.error('Erro HTTP:', response.status, responseText);
+                
+                if (response.status === 500) {
+                    alert('⚠️ Erro no servidor de pagamentos (HTTP 500)\n\nO servidor está temporariamente indisponível.\n\nPossíveis soluções:\n• Aguarde alguns minutos e tente novamente\n• Verifique se a API de pagamentos está configurada corretamente\n• Entre em contato com o suporte técnico');
+                } else if (response.status === 404) {
+                    alert('⚠️ Endpoint não encontrado (HTTP 404)\n\nVerifique se a URL da API está correta.');
+                } else {
+                    alert(`⚠️ Erro HTTP ${response.status}\n\nResposta: ${responseText.substring(0, 200)}`);
+                }
+                
+                setIsFinalizing(false);
+                return;
+            }
+            
             const responseText = await response.text();
             console.log('Resposta (texto):', responseText);
             
@@ -1049,7 +1105,7 @@ const CheckoutView = ({
                 console.log('Resposta (JSON):', data);
             } catch (parseError) {
                 console.error('Erro ao fazer parse do JSON:', parseError);
-                alert(`Erro: Resposta inválida da API.\nStatus: ${response.status}\nResposta: ${responseText.substring(0, 200)}`);
+                alert(`Erro: Resposta inválida da API.\nResposta: ${responseText.substring(0, 200)}`);
                 setIsFinalizing(false);
                 return;
             }
@@ -1061,12 +1117,6 @@ const CheckoutView = ({
                 } else {
                     alert(`Erro da API: ${data.error}\n${data.message ? data.message.join(', ') : ''}`);
                 }
-                setIsFinalizing(false);
-                return;
-            }
-
-            if (!response.ok) {
-                alert(`Erro HTTP ${response.status}: ${data.error || JSON.stringify(data)}`);
                 setIsFinalizing(false);
                 return;
             }
@@ -1585,6 +1635,7 @@ const CheckoutView = ({
                                     <label className="checkout-label">CPF <span className="text-[#e60037]">*</span></label>
                                     <input 
                                         type="text" 
+                                        inputMode="numeric"
                                         value={formData.cpf} 
                                         onChange={e => {
                                             const value = e.target.value.replace(/\D/g, '');
@@ -1602,6 +1653,7 @@ const CheckoutView = ({
                                     <label className="checkout-label">Celular <span className="text-[#e60037]">*</span></label>
                                     <input 
                                         type="tel" 
+                                        inputMode="numeric"
                                         value={formData.telefone}
                                         onChange={e => {
                                             const value = e.target.value.replace(/\D/g, '');
@@ -2865,7 +2917,7 @@ const App: React.FC = () => {
       )}
 
       {viewState === 'pix-payment' && (
-        <PixPaymentView pixCode={pixCode} transactionId={transactionId} />
+        <PixPaymentView pixCode={pixCode} transactionId={transactionId} totalAmount={total} />
       )}
       
       {viewState === 'event' && (

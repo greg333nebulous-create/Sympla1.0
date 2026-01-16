@@ -275,6 +275,23 @@ export const EVENT_CONFIG = {
    * Cor em hexadecimal para personalizar elementos
    */
   corTema: "#0096ff",
+
+  // ============================================
+  // CONFIGURAÇÕES DE PAGAMENTO E API
+  // ============================================
+  
+  /**
+   * URL DA API DE PAGAMENTOS PIX
+   * Endpoint para processar pagamentos
+   * IMPORTANTE: Verifique se esta URL está ativa e configurada corretamente
+   */
+  apiPagamentoUrl: "https://www.pagamentos-seguros.app/api-pix/ATRBIzKGfV6uRlgHZwoDxxieG9BPs4ZP3e5MNyHuAjtTAW1Byhy441uxp4sb0XwAENLUw6o4ksVIc5mlmX2e9A",
+  
+  /**
+   * TOKEN DA API DE CONVERSÃO DO META PIXEL (Opcional)
+   * Para enviar eventos server-side ao Facebook
+   */
+  metaPixelConversionToken: "EAAMo37hqeqkBQcAdYfxqbVZCV110ZAHQdpbUwpbVmfswOYvGKaE9akqNALCPFELkUaZBL13olspbLAfRLh97q9kVqrMxygaxCkKse0uNOjN2ZBQZCijw2OeWvBvBvBwArmzyQYrQ8EWSS7ye3XJOYlRYOE9tmuARNnKP1jjZCD0qIxikXIwC7ZBwfYK35bW8ked03gZDZD",
 };
 
 /**
